@@ -83,6 +83,18 @@ async function main() {
   worker.onmessage = (e) => {
     const { data, sortTime } = e.data;
 
+    // console.log(globalData);
+    // globalData = {
+    //   gaussians: {
+    //     ...data,
+    //     count: gaussianCount,
+    //     cov3Ds: globalData.gaussians.cov3Ds,
+    //     cov3Da: globalData.gaussians.cov3Da,
+    //     cov3Db: globalData.gaussians.cov3Db,
+    //   },
+    // };
+    console.log(globalData);
+
     if (
       getComputedStyle(document.querySelector("#loading-container")).opacity !=
       0
@@ -123,7 +135,8 @@ async function main() {
 function handleInteractive(e) {
   console.log("interacitve Click!", e);
   if (e.ctrlKey) {
-    colorRed(e.clientX, e.clientY);
+    // colorRed(e.clientX, e.clientY);
+    removeOpacity(e.clientX, e.clientY);
   }
 }
 
@@ -143,11 +156,8 @@ function getGuassiansWithinDistance(pos, threshold) {
 
 function colorRed(x, y) {
   const hit = cam.raycast(x, y);
-  const hitPos = hit.pos;
-  const hits = getGuassiansWithinDistance(hitPos, 0.5);
-
+  const hits = getGuassiansWithinDistance(hit.pos, 0.5);
   console.log("hits", hits);
-
   hits.forEach((hit) => {
     const i = hit.id;
     globalData.gaussians.colors[3 * i] = 1;
@@ -155,15 +165,36 @@ function colorRed(x, y) {
     globalData.gaussians.colors[3 * i + 2] = 0;
   });
 
+  // console.log(globalData.gaussians.colors);
   // updateBuffer(colorBuffer, globalData.gaussians.colors);
 
   cam.needsWorkerUpdate = true;
   worker.postMessage(globalData);
   cam.updateWorker();
-
   // updateBuffer(buffers.center, data.positions);
   // updateBuffer(buffers.opacity, data.opacities);
+  requestRender();
+}
 
+function removeOpacity(x, y) {
+  const hit = cam.raycast(x, y);
+  const hits = getGuassiansWithinDistance(hit.pos, 0.5);
+  console.log("hits", hits);
+  hits.forEach((hit) => {
+    const i = hit.id;
+    globalData.gaussians.opacities[i] = 0;
+    // globalData.gaussians.colors[3 * i] = 1;
+    // globalData.gaussians.colors[3 * i + 1] = 0;
+    // globalData.gaussians.colors[3 * i + 2] = 0;
+  });
+
+  // console.log(globalData.gaussians.colors);
+  // updateBuffer(colorBuffer, globalData.gaussians.colors);
+  // updateBuffer(opacityBuffer, globalData.gaussians.opacities);
+  cam.needsWorkerUpdate = true;
+  worker.postMessage(globalData);
+  cam.updateWorker();
+  // updateBuffer(buffers.center, data.positions);
   requestRender();
 }
 
@@ -204,6 +235,7 @@ async function loadScene({ scene, file }) {
       count: gaussianCount,
     },
   };
+  console.log(globalData);
 
   // Send gaussian data to the worker
   worker.postMessage({
