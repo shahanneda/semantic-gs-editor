@@ -11,7 +11,7 @@ let gaussianCount;
 let sceneMin, sceneMax;
 
 let gizmoRenderer = new GizmoRenderer();
-let opacityBuffer, positionBuffer, positionData, opacityData;
+let colorBuffer, opacityBuffer, positionBuffer, positionData, opacityData;
 globalData = undefined;
 
 const settings = {
@@ -100,6 +100,7 @@ async function main() {
     // Needed for the gizmo renderer
     positionBuffer = buffers.center;
     opacityBuffer = buffers.opacity;
+    colorBuffer = buffers.color;
     positionData = data.positions;
     opacityData = data.opacities;
 
@@ -117,6 +118,53 @@ async function main() {
 
   // Load the default scene
   await loadScene({ scene: settings.scene });
+}
+
+function handleInteractive(e) {
+  console.log("interacitve Click!", e);
+  if (e.ctrlKey) {
+    colorRed(e.clientX, e.clientY);
+  }
+}
+
+function getGuassiansWithinDistance(pos, threshold) {
+  const hits = [];
+  for (let i = 0; i < gaussianCount; i++) {
+    const gPos = globalData.gaussians.positions.slice(i * 3, i * 3 + 3);
+    const dist = vec3.distance(gPos, pos);
+    if (dist < threshold) {
+      hits.push({
+        id: i,
+      });
+    }
+  }
+  return hits;
+}
+
+function colorRed(x, y) {
+  const hit = cam.raycast(x, y);
+  const hitPos = hit.pos;
+  const hits = getGuassiansWithinDistance(hitPos, 0.5);
+
+  console.log("hits", hits);
+
+  hits.forEach((hit) => {
+    const i = hit.id;
+    globalData.gaussians.colors[3 * i] = 1;
+    globalData.gaussians.colors[3 * i + 1] = 0;
+    globalData.gaussians.colors[3 * i + 2] = 0;
+  });
+
+  // updateBuffer(colorBuffer, globalData.gaussians.colors);
+
+  cam.needsWorkerUpdate = true;
+  worker.postMessage(globalData);
+  cam.updateWorker();
+
+  // updateBuffer(buffers.center, data.positions);
+  // updateBuffer(buffers.opacity, data.opacities);
+
+  requestRender();
 }
 
 // Load a .ply scene specified as a name (URL fetch) or local file

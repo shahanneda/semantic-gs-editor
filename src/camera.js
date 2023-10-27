@@ -139,9 +139,10 @@ class Camera {
         this.isDragging = false;
         return;
       }
-      if (e.ctrlKey) {
-        this.raycast_gs(e.clientX, e.clientY);
-      }
+      handleInteractive(e);
+      //   if (e.ctrlKey) {
+      //     this.raycast_gs(e.clientX, e.clientY);
+      //   }
 
       if (this.disableMovement || !this.isCalibrating) return;
       this.raycast_calibrate(e.clientX, e.clientY);
@@ -359,6 +360,9 @@ class Camera {
       globalData.gaussians.colors[3 * i + 1] = 0;
       globalData.gaussians.colors[3 * i + 2] = 0;
     });
+    this.needsWorkerUpdate = true;
+    worker.postMessage(globalData);
+    this.updateWorker();
 
     // for (let i = 0; i < gaussianCount; i++) {
     //   //   opacityData[i] = opacityData[i] / 2;
@@ -368,9 +372,6 @@ class Camera {
     //   globalData.gaussians.colors[3 * i + 2] = 0;
     // }
     // updateBuffer(opacityBuffer, opacityData);
-    this.needsWorkerUpdate = true;
-    worker.postMessage(globalData);
-    this.updateWorker();
     // console.log(opacityData);
 
     // const hitPosition = vec3.add(
@@ -385,6 +386,7 @@ class Camera {
     // Update gizmo renderer
     // gizmoRenderer.setPlaneVertices(...this.calibrationPoints);
     requestRender();
+
 
     return rd;
   }
