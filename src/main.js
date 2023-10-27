@@ -13,6 +13,7 @@ let sceneMin, sceneMax;
 let gizmoRenderer = new GizmoRenderer();
 let colorBuffer, opacityBuffer, positionBuffer, positionData, opacityData;
 globalData = undefined;
+let MOVING_DOWN = false;
 
 const settings = {
   scene: "room",
@@ -59,6 +60,7 @@ const defaultCameraParameters = {
 };
 
 const updateBuffer = (buffer, data) => {
+  // console.log("setting buffer", buffer, "data", data);
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
   gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
 };
@@ -84,15 +86,15 @@ async function main() {
     const { data, sortTime } = e.data;
 
     // console.log(globalData);
-    // globalData = {
-    //   gaussians: {
-    //     ...data,
-    //     count: gaussianCount,
-    //     cov3Ds: globalData.gaussians.cov3Ds,
-    //     cov3Da: globalData.gaussians.cov3Da,
-    //     cov3Db: globalData.gaussians.cov3Db,
-    //   },
-    // };
+    globalData = {
+      gaussians: {
+        ...data,
+        ...globalData.gaussians,
+        // cov3Ds: globalData.gaussians.cov3Ds,
+        // cov3Da: globalData.gaussians.cov3Da,
+        // cov3Db: globalData.gaussians.cov3Db,
+      },
+    };
     console.log(globalData);
 
     if (
@@ -134,9 +136,13 @@ async function main() {
 
 function handleInteractive(e) {
   console.log("interacitve Click!", e);
-  if (e.ctrlKey) {
+  if (e.altKey && e.ctrlKey) {
+    moveUp(e.clientX, e.clientY);
+  } else if (e.ctrlKey) {
     // colorRed(e.clientX, e.clientY);
     removeOpacity(e.clientX, e.clientY);
+  } else if (e.altKey) {
+    colorRed(e.clientX, e.clientY);
   }
 }
 
@@ -167,13 +173,37 @@ function colorRed(x, y) {
 
   // console.log(globalData.gaussians.colors);
   // updateBuffer(colorBuffer, globalData.gaussians.colors);
-
   cam.needsWorkerUpdate = true;
   worker.postMessage(globalData);
   cam.updateWorker();
   // updateBuffer(buffers.center, data.positions);
   // updateBuffer(buffers.opacity, data.opacities);
   requestRender();
+}
+function moveUp(x, y) {
+  console.log("moving up!");
+  const hit = cam.raycast(x, y);
+  const hits = getGuassiansWithinDistance(hit.pos, 0.5);
+  console.log("hits", hits);
+  hits.forEach((hit) => {
+    const i = hit.id;
+    globalData.gaussians.positions[i * 3 + 0] += 0.0;
+    globalData.gaussians.positions[i * 3 + 1] -= (MOVING_DOWN ? 1 : -1) * 0.2;
+    globalData.gaussians.positions[i * 3 + 2] += 0.0;
+    // /*  */ globalData.gaussians.opacities[i] = 0;
+    // globalData.gaussians.colors[3 * i] = 1;
+    // globalData.gaussians.colors[3 * i + 1] = 0;
+    // globalData.gaussians.colors[3 * i + 2] = 0;
+  });
+
+  // console.log(globalData.gaussians.colors);
+  // updateBuffer(colorBuffer, globalData.gaussians.colors);
+  // updateBuffer(opacityBuffer, globalData.gaussians.opacities);
+  requestRender();
+  cam.needsWorkerUpdate = true;
+  worker.postMessage(globalData);
+  cam.updateWorker();
+  // updateBuffer(buffers.center, data.positions);
 }
 
 function removeOpacity(x, y) {
@@ -191,11 +221,11 @@ function removeOpacity(x, y) {
   // console.log(globalData.gaussians.colors);
   // updateBuffer(colorBuffer, globalData.gaussians.colors);
   // updateBuffer(opacityBuffer, globalData.gaussians.opacities);
+  requestRender();
   cam.needsWorkerUpdate = true;
   worker.postMessage(globalData);
   cam.updateWorker();
   // updateBuffer(buffers.center, data.positions);
-  requestRender();
 }
 
 // Load a .ply scene specified as a name (URL fetch) or local file

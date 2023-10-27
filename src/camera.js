@@ -124,6 +124,10 @@ class Camera {
     });
 
     document.addEventListener("keyup", (e) => {
+      if (e.code == "KeyM") {
+        MOVING_DOWN = !MOVING_DOWN;
+      }
+
       if (
         !this.freeFly ||
         this.disableMovement ||
@@ -135,11 +139,11 @@ class Camera {
 
     // Gizmo event
     gl.canvas.addEventListener("mouseup", (e) => {
+      handleInteractive(e);
       if (this.isDragging) {
         this.isDragging = false;
         return;
       }
-      handleInteractive(e);
       //   if (e.ctrlKey) {
       //     this.raycast_gs(e.clientX, e.clientY);
       //   }
@@ -386,7 +390,6 @@ class Camera {
     // Update gizmo renderer
     // gizmoRenderer.setPlaneVertices(...this.calibrationPoints);
     requestRender();
-
 
     return rd;
   }
