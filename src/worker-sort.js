@@ -17,7 +17,22 @@ onmessage = function (event) {
     data.opacities = new Float32Array(gaussians.count);
     data.cov3Da = new Float32Array(gaussians.count * 3);
     data.cov3Db = new Float32Array(gaussians.count * 3);
+
     data.colors = new Float32Array(gaussians.count * 3);
+
+    console.log("3ds are", gaussians);
+    // gaussians.cov3Da = new Float32Array(gaussians.count * 3);
+    // gaussians.cov3Db = new Float32Array(gaussians.count * 3);
+
+    // for (let i = 0; i < gaussians.count; i++) {
+    //   gaussians.cov3Da[i * 3] = gaussians.cov3Ds[i * 6];
+    //   gaussians.cov3Da[i * 3 + 1] = gaussians.cov3Ds[i * 6 + 1];
+    //   gaussians.cov3Da[i * 3 + 2] = gaussians.cov3Ds[i * 6 + 2];
+
+    //   gaussians.cov3Db[i * 3] = gaussians.cov3Ds[i * 6 + 3];
+    //   gaussians.cov3Db[i * 3 + 1] = gaussians.cov3Ds[i * 6 + 4];
+    //   gaussians.cov3Db[i * 3 + 2] = gaussians.cov3Ds[i * 6 + 5];
+    // }
     // console.log(gaussians);
   }
   // Sort gaussians event
@@ -45,15 +60,23 @@ onmessage = function (event) {
 
       data.opacities[j] = gaussians.opacities[i];
 
+      data.cov3Da[j * 3] = gaussians.cov3Da[i * 3];
+      data.cov3Da[j * 3 + 1] = gaussians.cov3Da[i * 3 + 1];
+      data.cov3Da[j * 3 + 2] = gaussians.cov3Da[i * 3 + 2];
+
+      data.cov3Db[j * 3] = gaussians.cov3Db[i * 3];
+      data.cov3Db[j * 3 + 1] = gaussians.cov3Db[i * 3 + 1];
+      data.cov3Db[j * 3 + 2] = gaussians.cov3Db[i * 3 + 2];
+
       // Split the covariance matrix into two vec3
       // so they can be used as vertex shader attributes
-      data.cov3Da[j * 3] = gaussians.cov3Ds[i * 6];
-      data.cov3Da[j * 3 + 1] = gaussians.cov3Ds[i * 6 + 1];
-      data.cov3Da[j * 3 + 2] = gaussians.cov3Ds[i * 6 + 2];
+      // data.cov3Da[j * 3] = gaussians.cov3Ds[i * 6];
+      // data.cov3Da[j * 3 + 1] = gaussians.cov3Ds[i * 6 + 1];
+      // data.cov3Da[j * 3 + 2] = gaussians.cov3Ds[i * 6 + 2];
 
-      data.cov3Db[j * 3] = gaussians.cov3Ds[i * 6 + 3];
-      data.cov3Db[j * 3 + 1] = gaussians.cov3Ds[i * 6 + 4];
-      data.cov3Db[j * 3 + 2] = gaussians.cov3Ds[i * 6 + 5];
+      // data.cov3Db[j * 3] = gaussians.cov3Ds[i * 6 + 3];
+      // data.cov3Db[j * 3 + 1] = gaussians.cov3Ds[i * 6 + 4];
+      // data.cov3Db[j * 3 + 2] = gaussians.cov3Ds[i * 6 + 5];
     }
 
     const sortTime = `${((performance.now() - start) / 1000).toFixed(3)}s`;

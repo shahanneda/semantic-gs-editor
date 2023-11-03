@@ -11,7 +11,12 @@ let gaussianCount;
 let sceneMin, sceneMax;
 
 let gizmoRenderer = new GizmoRenderer();
-let colorBuffer, opacityBuffer, positionBuffer, positionData, opacityData;
+let colorBuffer,
+  opacityBuffer,
+  positionBuffer,
+  positionData,
+  opacityData,
+  colorData;
 globalData = undefined;
 let MOVING_DOWN = false;
 
@@ -85,14 +90,17 @@ async function main() {
   worker.onmessage = (e) => {
     const { data, sortTime } = e.data;
 
+    console.log("received data is", data);
     // console.log(globalData);
     globalData = {
       gaussians: {
         ...data,
-        ...globalData.gaussians,
+        // ...globalData.gaussians,
+        // colors: data.colors,
         // cov3Ds: globalData.gaussians.cov3Ds,
         // cov3Da: globalData.gaussians.cov3Da,
         // cov3Db: globalData.gaussians.cov3Db,
+        count: gaussianCount,
       },
     };
     console.log(globalData);
@@ -115,6 +123,7 @@ async function main() {
     positionBuffer = buffers.center;
     opacityBuffer = buffers.opacity;
     colorBuffer = buffers.color;
+    colorData = data.colors;
     positionData = data.positions;
     opacityData = data.opacities;
 
@@ -172,14 +181,20 @@ function colorRed(x, y) {
   });
 
   // console.log(globalData.gaussians.colors);
+  // console.log(colorBuffer);
   // updateBuffer(colorBuffer, globalData.gaussians.colors);
+  // console.log(globalData.gaussians.colors[10]);
+  // console.log(colorData[10]);
+
+  updateBuffer(colorBuffer, globalData.gaussians.colors);
+  requestRender();
   cam.needsWorkerUpdate = true;
   worker.postMessage(globalData);
   cam.updateWorker();
   // updateBuffer(buffers.center, data.positions);
   // updateBuffer(buffers.opacity, data.opacities);
-  requestRender();
 }
+
 function moveUp(x, y) {
   console.log("moving up!");
   const hit = cam.raycast(x, y);
@@ -221,6 +236,7 @@ function removeOpacity(x, y) {
   // console.log(globalData.gaussians.colors);
   // updateBuffer(colorBuffer, globalData.gaussians.colors);
   // updateBuffer(opacityBuffer, globalData.gaussians.opacities);
+  updateBuffer(opacityBuffer, globalData.gaussians.opacities);
   requestRender();
   cam.needsWorkerUpdate = true;
   worker.postMessage(globalData);
@@ -241,6 +257,7 @@ async function loadScene({ scene, file }) {
   if (scene != null) {
     scene = scene.split("(")[0].trim();
     // const url = `https://huggingface.co/kishimisu/3d-gaussian-splatting-webgl/resolve/main/${scene}.ply`;
+    // const url = `http://127.0.0.1:5500/data/shahan2-400005.ply`;
     const url = `http://127.0.0.1:5500/data/room.ply`;
     const response = await fetch(url);
     contentLength = parseInt(response.headers.get("content-length"));
@@ -258,7 +275,20 @@ async function loadScene({ scene, file }) {
 
   // Load and pre-process gaussian data from .ply file
   const data = await loadPly(content.buffer);
+  data.cov3Da = new Float32Array(gaussianCount * 3);
+  data.cov3Db = new Float32Array(gaussianCount * 3);
 
+  for (let i = 0; i < gaussianCount; i++) {
+    data.cov3Da[i * 3] = data.cov3Ds[i * 6];
+    data.cov3Da[i * 3 + 1] = data.cov3Ds[i * 6 + 1];
+    data.cov3Da[i * 3 + 2] = data.cov3Ds[i * 6 + 2];
+
+    data.cov3Db[i * 3] = data.cov3Ds[i * 6 + 3];
+    data.cov3Db[i * 3 + 1] = data.cov3Ds[i * 6 + 4];
+    data.cov3Db[i * 3 + 2] = data.cov3Ds[i * 6 + 5];
+  }
+
+  console.log("at load time data is", data);
   globalData = {
     gaussians: {
       ...data,
@@ -268,6 +298,7 @@ async function loadScene({ scene, file }) {
   console.log(globalData);
 
   // Send gaussian data to the worker
+
   worker.postMessage({
     gaussians: {
       ...data,

@@ -503,6 +503,8 @@ class Camera {
     this.calibrationPoints = [];
     cam.up = gizmoRenderer.planeNormal;
     cam.sceneRotationMatrix = rotateAlign(gizmoRenderer.planeNormal, [0, 1, 0]);
+    console.log(cam.up);
+    console.log(cam.sceneRotationMatrix);
     requestRender();
   }
 }
