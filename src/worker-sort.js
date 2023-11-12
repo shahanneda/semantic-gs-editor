@@ -10,8 +10,8 @@ onmessage = function (event) {
 
     depthIndex = new Uint32Array(gaussians.count);
 
-    console.log(`[Worker] Received ${gaussians.count} gaussians`);
-    console.log(event.data);
+    // console.log(`[Worker] Received ${gaussians.count} gaussians`);
+    // console.log(event.data);
 
     data.positions = new Float32Array(gaussians.count * 3);
     data.opacities = new Float32Array(gaussians.count);
@@ -20,7 +20,7 @@ onmessage = function (event) {
 
     data.colors = new Float32Array(gaussians.count * 3);
 
-    console.log("3ds are", gaussians);
+    // console.log("3ds are", gaussians);
     // gaussians.cov3Da = new Float32Array(gaussians.count * 3);
     // gaussians.cov3Db = new Float32Array(gaussians.count * 3);
 
@@ -39,14 +39,15 @@ onmessage = function (event) {
   else if (event.data.viewMatrix) {
     const { viewMatrix, maxGaussians, sortingAlgorithm } = event.data;
 
-    const start = performance.now();
-
     gaussians.count = Math.min(gaussians.totalCount, maxGaussians);
 
     // Sort the gaussians!
+
     sortGaussiansByDepth(depthIndex, gaussians, viewMatrix, sortingAlgorithm);
+    const start = performance.now();
 
     // Update arrays containing the data
+    console.log(depthIndex);
     for (let j = 0; j < gaussians.count; j++) {
       const i = depthIndex[j];
 
@@ -73,12 +74,10 @@ onmessage = function (event) {
       // data.cov3Da[j * 3] = gaussians.cov3Ds[i * 6];
       // data.cov3Da[j * 3 + 1] = gaussians.cov3Ds[i * 6 + 1];
       // data.cov3Da[j * 3 + 2] = gaussians.cov3Ds[i * 6 + 2];
-
       // data.cov3Db[j * 3] = gaussians.cov3Ds[i * 6 + 3];
       // data.cov3Db[j * 3 + 1] = gaussians.cov3Ds[i * 6 + 4];
       // data.cov3Db[j * 3 + 2] = gaussians.cov3Ds[i * 6 + 5];
     }
-
     const sortTime = `${((performance.now() - start) / 1000).toFixed(3)}s`;
     console.log(
       `[Worker] Sorted ${gaussians.count} gaussians in ${sortTime}. Algorithm: ${sortingAlgorithm}`
@@ -163,6 +162,7 @@ function quicksort(A, B, lo, hi) {
     quicksort(A, B, p + 1, hi);
   }
 }
+
 function partition(A, B, lo, hi) {
   const pivot = A[Math.floor((hi - lo) / 2) + lo];
   let i = lo - 1;

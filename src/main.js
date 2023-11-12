@@ -9,6 +9,7 @@ let renderTimeout = null;
 
 let gaussianCount;
 let sceneMin, sceneMax;
+let point_mode = false;
 
 let gizmoRenderer = new GizmoRenderer();
 let colorBuffer,
@@ -23,7 +24,7 @@ let MOVING_DOWN = false;
 const settings = {
   scene: "room",
   renderResolution: 0.2,
-  maxGaussians: 1e6,
+  maxGaussians: 3e6,
   scalingModifier: 1,
   sortingAlgorithm: "count sort",
   bgColor: "#000000",
@@ -90,8 +91,6 @@ async function main() {
   worker.onmessage = (e) => {
     const { data, sortTime } = e.data;
 
-    console.log("received data is", data);
-    // console.log(globalData);
     globalData = {
       gaussians: {
         ...data,
@@ -103,7 +102,6 @@ async function main() {
         count: gaussianCount,
       },
     };
-    console.log(globalData);
 
     if (
       getComputedStyle(document.querySelector("#loading-container")).opacity !=
@@ -144,7 +142,6 @@ async function main() {
 }
 
 function handleInteractive(e) {
-  console.log("interacitve Click!", e);
   if (e.altKey && e.ctrlKey) {
     moveUp(e.clientX, e.clientY);
   } else if (e.ctrlKey) {
@@ -169,22 +166,51 @@ function getGuassiansWithinDistance(pos, threshold) {
   return hits;
 }
 
+// function vec3_array_mean(){
+
+// }
+
+function getGuassiansSameColor(pos, id, posThreshold, colorThreshold) {
+  let targetColors = [globalData.gaussians.colors.slice(id * 3, id * 3 + 3)];
+  const hits = [];
+  console.log("Got target color", targetColors);
+
+  for (let j = 0; j < 1; j++) {
+    for (let i = 0; i < gaussianCount; i++) {
+      const gPos = globalData.gaussians.positions.slice(i * 3, i * 3 + 3);
+      const gColor = globalData.gaussians.colors.slice(i * 3, i * 3 + 3);
+      const posDist = vec3.distance(gPos, pos);
+
+      let targetColorDistances = targetColors.map((targetColor) =>
+        vec3.distance(targetColor, gColor)
+      );
+
+      const colorDist = Math.min(targetColorDistances);
+
+      if (posDist < posThreshold && colorDist < colorThreshold) {
+        // targetColors.push(gColor);
+
+        hits.push({
+          id: i,
+        });
+      }
+    }
+    console.log(targetColors);
+    console.log(hits);
+  }
+  return hits;
+}
+
 function colorRed(x, y) {
   const hit = cam.raycast(x, y);
-  const hits = getGuassiansWithinDistance(hit.pos, 0.5);
-  console.log("hits", hits);
+  const hits = getGuassiansWithinDistance(hit.pos, 0.2);
+  // const hits = getGuassiansSameColor(hit.pos, hit.id, 1, 0.1);
   hits.forEach((hit) => {
     const i = hit.id;
     globalData.gaussians.colors[3 * i] = 1;
     globalData.gaussians.colors[3 * i + 1] = 0;
     globalData.gaussians.colors[3 * i + 2] = 0;
   });
-
-  // console.log(globalData.gaussians.colors);
-  // console.log(colorBuffer);
-  // updateBuffer(colorBuffer, globalData.gaussians.colors);
-  // console.log(globalData.gaussians.colors[10]);
-  // console.log(colorData[10]);
 
   updateBuffer(colorBuffer, globalData.gaussians.colors);
   requestRender();
@@ -196,14 +222,15 @@ function colorRed(x, y) {
 }
 
 function moveUp(x, y) {
-  console.log("moving up!");
+  // console.log("moving up!");
   const hit = cam.raycast(x, y);
-  const hits = getGuassiansWithinDistance(hit.pos, 0.5);
-  console.log("hits", hits);
+  const hits = getGuassiansWithinDistance(hit.pos, 4);
+  // const hits = getGuassiansSameColor(hit.pos, hit.id, 1, 0.1);
+  // console.log("hits", hits);
   hits.forEach((hit) => {
     const i = hit.id;
     globalData.gaussians.positions[i * 3 + 0] += 0.0;
-    globalData.gaussians.positions[i * 3 + 1] -= (MOVING_DOWN ? 1 : -1) * 0.2;
+    globalData.gaussians.positions[i * 3 + 1] -= (MOVING_DOWN ? 1 : -1) * 1;
     globalData.gaussians.positions[i * 3 + 2] += 0.0;
     // /*  */ globalData.gaussians.opacities[i] = 0;
     // globalData.gaussians.colors[3 * i] = 1;
@@ -212,6 +239,7 @@ function moveUp(x, y) {
   });
 
   // console.log(globalData.gaussians.colors);
+  updateBuffer(positionBuffer, globalData.gaussians.positions);
   // updateBuffer(colorBuffer, globalData.gaussians.colors);
   // updateBuffer(opacityBuffer, globalData.gaussians.opacities);
   requestRender();
@@ -258,7 +286,12 @@ async function loadScene({ scene, file }) {
     scene = scene.split("(")[0].trim();
     // const url = `https://huggingface.co/kishimisu/3d-gaussian-splatting-webgl/resolve/main/${scene}.ply`;
     // const url = `http://127.0.0.1:5500/data/shahan2-400005.ply`;
-    const url = `http://127.0.0.1:5500/data/room.ply`;
+    // const url = `http://127.0.0.1:5500/data/shahan2-id05-100000.ply`;
+    // const url = `http://127.0.0.1:5500/data/shahan2-id06-150000.ply`;
+    // const url = `http://127.0.0.1:5500/data/playground.ply`;
+    // const url = `http://127.0.0.1:5500/data/room.ply`;
+    const url = `http://127.0.0.1:5500/data/Shahan_03_id01-30000.ply`;
+    // const url = `http://127.0.0.1:5500/data/Shahan_02_id02-120000.ply`;
     const response = await fetch(url);
     contentLength = parseInt(response.headers.get("content-length"));
     reader = response.body.getReader();
@@ -275,27 +308,38 @@ async function loadScene({ scene, file }) {
 
   // Load and pre-process gaussian data from .ply file
   const data = await loadPly(content.buffer);
+  console.log(gaussianCount);
   data.cov3Da = new Float32Array(gaussianCount * 3);
   data.cov3Db = new Float32Array(gaussianCount * 3);
 
   for (let i = 0; i < gaussianCount; i++) {
-    data.cov3Da[i * 3] = data.cov3Ds[i * 6];
-    data.cov3Da[i * 3 + 1] = data.cov3Ds[i * 6 + 1];
-    data.cov3Da[i * 3 + 2] = data.cov3Ds[i * 6 + 2];
+    if (point_mode) {
+      data.cov3Da[i * 3] = 0;
+      data.cov3Da[i * 3 + 1] = 0;
+      data.cov3Da[i * 3 + 2] = 0;
 
-    data.cov3Db[i * 3] = data.cov3Ds[i * 6 + 3];
-    data.cov3Db[i * 3 + 1] = data.cov3Ds[i * 6 + 4];
-    data.cov3Db[i * 3 + 2] = data.cov3Ds[i * 6 + 5];
+      data.cov3Db[i * 3] = 0;
+      data.cov3Db[i * 3 + 1] = 0;
+      data.cov3Db[i * 3 + 2] = 0;
+    } else {
+      data.cov3Da[i * 3] = data.cov3Ds[i * 6];
+      data.cov3Da[i * 3 + 1] = data.cov3Ds[i * 6 + 1];
+      data.cov3Da[i * 3 + 2] = data.cov3Ds[i * 6 + 2];
+
+      data.cov3Db[i * 3] = data.cov3Ds[i * 6 + 3];
+      data.cov3Db[i * 3 + 1] = data.cov3Ds[i * 6 + 4];
+      data.cov3Db[i * 3 + 2] = data.cov3Ds[i * 6 + 5];
+    }
   }
 
-  console.log("at load time data is", data);
+  // console.log("at load time data is", data);
   globalData = {
     gaussians: {
       ...data,
       count: gaussianCount,
     },
   };
-  console.log(globalData);
+  // console.log(globalData);
 
   // Send gaussian data to the worker
 

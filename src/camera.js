@@ -312,10 +312,8 @@ class Camera {
     vec3.normalize(rd, rd);
 
     // Raycast the gaussian splats
-    console.log(gaussianCount);
     // for (let i = 0; i < gaussianCount; i++) {
     //   const pos = positionData.slice(i * 3, i * 3 + 3);
-    //   //   console.log(pos);
     //   const alpha = opacityData[i];
 
     //   if (alpha < 0.1) continue;
@@ -333,7 +331,6 @@ class Camera {
     const hits = [];
     const hit = this.raycast(x, y);
     const hitPos = hit.pos;
-    // console.log("got hit", hit);
     for (let i = 0; i < gaussianCount; i++) {
       const pos = globalData.gaussians.positions.slice(i * 3, i * 3 + 3);
       //   const alpha = opacityData[i];
@@ -351,7 +348,6 @@ class Camera {
     // console.log(hits);
 
     // if (hits.len == -1) return null;
-    console.log("got", hits.length, " hits ");
     // console.log(positionData.slice(hit.id * 3, hit.id * 3 + 3));
     // console.log(opacityData[hit.id]);
 
@@ -427,14 +423,15 @@ class Camera {
         hit.dist = t;
       }
     }
-
     if (hit.id == -1) return null;
+
     const hitPosition = vec3.add(
       vec3.create(),
       this.pos,
       vec3.scale(vec3.create(), rd, hit.dist)
     );
     hit.pos = hitPosition;
+    hit.color = colorData[hit.id];
 
     return hit;
   }
