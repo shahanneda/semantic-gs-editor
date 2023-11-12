@@ -27,6 +27,10 @@ function initGUI() {
   //     .onChange((scene) => loadScene({ scene }));
 
   gui.add(settings, "selectionSize", 0.01, 1, 0.01).name("Selection Size");
+  gui.add(settings, "moveDistance", 0.01, 1, 0.01).name("Move Distance");
+  gui.add(settings, "moveDirection", ["UP", "DOWN"]).name("Move Direction");
+  gui.addColor(settings, "editColor").name("Color");
+
   addOtherFolder(gui);
   //   addCameraCalibrationFolder(gui);
 }

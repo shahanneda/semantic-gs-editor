@@ -19,7 +19,6 @@ let colorBuffer,
   opacityData,
   colorData;
 globalData = undefined;
-let MOVING_DOWN = false;
 
 const settings = {
   scene: "room",
@@ -35,6 +34,9 @@ const settings = {
   sortTime: "NaN",
   file: "data/nike/model.splat",
   selectionSize: 0.5,
+  moveDistance: 0.5,
+  moveDirection: "UP",
+  editColor: { r: 1, g: 1, b: 1 },
   uploadFile: () => document.querySelector("#input").click(),
 
   // Camera calibration
@@ -149,7 +151,7 @@ function handleInteractive(e) {
     // colorRed(e.clientX, e.clientY);
     removeOpacity(e.clientX, e.clientY);
   } else if (e.altKey) {
-    colorRed(e.clientX, e.clientY);
+    interactiveColor(e.clientX, e.clientY);
   }
 }
 
@@ -202,15 +204,15 @@ function getGuassiansSameColor(pos, id, posThreshold, colorThreshold) {
   return hits;
 }
 
-function colorRed(x, y) {
+function interactiveColor(x, y) {
   const hit = cam.raycast(x, y);
   const hits = getGuassiansWithinDistance(hit.pos, settings.selectionSize);
   // const hits = getGuassiansSameColor(hit.pos, hit.id, 1, 0.1);
   hits.forEach((hit) => {
     const i = hit.id;
-    globalData.gaussians.colors[3 * i] = 1;
-    globalData.gaussians.colors[3 * i + 1] = 0;
-    globalData.gaussians.colors[3 * i + 2] = 0;
+    globalData.gaussians.colors[3 * i] = settings.editColor.r;
+    globalData.gaussians.colors[3 * i + 1] = settings.editColor.g;
+    globalData.gaussians.colors[3 * i + 2] = settings.editColor.b;
   });
 
   updateBuffer(colorBuffer, globalData.gaussians.colors);
@@ -231,7 +233,8 @@ function moveUp(x, y) {
   hits.forEach((hit) => {
     const i = hit.id;
     globalData.gaussians.positions[i * 3 + 0] += 0.0;
-    globalData.gaussians.positions[i * 3 + 1] -= (MOVING_DOWN ? 1 : -1) * 1;
+    globalData.gaussians.positions[i * 3 + 1] -=
+      (settings.moveDirection == "UP" ? 1 : -1) * settings.moveDistance;
     globalData.gaussians.positions[i * 3 + 2] += 0.0;
     // /*  */ globalData.gaussians.opacities[i] = 0;
     // globalData.gaussians.colors[3 * i] = 1;
