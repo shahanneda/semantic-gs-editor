@@ -39,15 +39,14 @@ onmessage = function (event) {
   else if (event.data.viewMatrix) {
     const { viewMatrix, maxGaussians, sortingAlgorithm } = event.data;
 
+    const start = performance.now();
+
     gaussians.count = Math.min(gaussians.totalCount, maxGaussians);
 
     // Sort the gaussians!
-
     sortGaussiansByDepth(depthIndex, gaussians, viewMatrix, sortingAlgorithm);
-    const start = performance.now();
 
     // Update arrays containing the data
-    console.log(depthIndex);
     for (let j = 0; j < gaussians.count; j++) {
       const i = depthIndex[j];
 
@@ -74,15 +73,17 @@ onmessage = function (event) {
       // data.cov3Da[j * 3] = gaussians.cov3Ds[i * 6];
       // data.cov3Da[j * 3 + 1] = gaussians.cov3Ds[i * 6 + 1];
       // data.cov3Da[j * 3 + 2] = gaussians.cov3Ds[i * 6 + 2];
+
       // data.cov3Db[j * 3] = gaussians.cov3Ds[i * 6 + 3];
       // data.cov3Db[j * 3 + 1] = gaussians.cov3Ds[i * 6 + 4];
       // data.cov3Db[j * 3 + 2] = gaussians.cov3Ds[i * 6 + 5];
     }
-    const sortTime = `${((performance.now() - start) / 1000).toFixed(3)}s`;
-    console.log(
-      `[Worker] Sorted ${gaussians.count} gaussians in ${sortTime}. Algorithm: ${sortingAlgorithm}`
-    );
 
+    const sortTime = `${((performance.now() - start) / 1000).toFixed(3)}s`;
+    // console.log(
+    // `[Worker] Sorted ${gaussians.count} gaussians in ${sortTime}. Algorithm: ${sortingAlgorithm}`
+    // );
+    //     );
     postMessage({
       data,
       sortTime,

@@ -34,6 +34,7 @@ const settings = {
   freeFly: false,
   sortTime: "NaN",
   file: "data/nike/model.splat",
+  selectionSize: 0.5,
   uploadFile: () => document.querySelector("#input").click(),
 
   // Camera calibration
@@ -203,7 +204,7 @@ function getGuassiansSameColor(pos, id, posThreshold, colorThreshold) {
 
 function colorRed(x, y) {
   const hit = cam.raycast(x, y);
-  const hits = getGuassiansWithinDistance(hit.pos, 0.2);
+  const hits = getGuassiansWithinDistance(hit.pos, settings.selectionSize);
   // const hits = getGuassiansSameColor(hit.pos, hit.id, 1, 0.1);
   hits.forEach((hit) => {
     const i = hit.id;
@@ -224,7 +225,7 @@ function colorRed(x, y) {
 function moveUp(x, y) {
   // console.log("moving up!");
   const hit = cam.raycast(x, y);
-  const hits = getGuassiansWithinDistance(hit.pos, 4);
+  const hits = getGuassiansWithinDistance(hit.pos, settings.selectionSize);
   // const hits = getGuassiansSameColor(hit.pos, hit.id, 1, 0.1);
   // console.log("hits", hits);
   hits.forEach((hit) => {
@@ -251,7 +252,7 @@ function moveUp(x, y) {
 
 function removeOpacity(x, y) {
   const hit = cam.raycast(x, y);
-  const hits = getGuassiansWithinDistance(hit.pos, 0.5);
+  const hits = getGuassiansWithinDistance(hit.pos, settings.selectionSize);
   console.log("hits", hits);
   hits.forEach((hit) => {
     const i = hit.id;
@@ -290,7 +291,8 @@ async function loadScene({ scene, file }) {
     // const url = `http://127.0.0.1:5500/data/shahan2-id06-150000.ply`;
     // const url = `http://127.0.0.1:5500/data/playground.ply`;
     // const url = `http://127.0.0.1:5500/data/room.ply`;
-    const url = `http://127.0.0.1:5500/data/Shahan_03_id01-30000.ply`;
+    // const url = `http://127.0.0.1:5500/data/Shahan_03_id01-30000.ply`;
+    const url = `http://127.0.0.1:5500/data/E7_01_id01-30000.ply`;
     // const url = `http://127.0.0.1:5500/data/Shahan_02_id02-120000.ply`;
     const response = await fetch(url);
     contentLength = parseInt(response.headers.get("content-length"));
