@@ -297,7 +297,8 @@ async function loadScene({ scene, file }) {
     // const url = `http://127.0.0.1:5500/data/Shahan_03_id01-30000.ply`;
     // const url = `http://127.0.0.1:5500/data/Shahan_03_id01-30000.ply`;
     // const url = `http://127.0.0.1:5500/data/Shahan_04_id01-30000.ply`;
-    const url = `http://127.0.0.1:5500/data/E7_01_id01-30000.ply`;
+    // const url = `http://127.0.0.1:5500/data/E7_01_id01-30000.ply`;
+    const url = `https://shahanneda-models.s3.us-east-2.amazonaws.com/E7_01_id01-30000.ply`;
     // const url = `http://127.0.0.1:5500/data/E7_01_id02-70000.ply`;
     // const url = `http://127.0.0.1:5500/data/Shahan_02_id02-120000.ply`;
     const response = await fetch(url);
