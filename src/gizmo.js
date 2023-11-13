@@ -17,13 +17,14 @@ class GizmoRenderer {
       this.planeVertices = new Float32Array([...v1, ...v2, ...v3]);
       return;
     }
-    console.log("after this");
+
+    // console.log("after this");
 
     // Update GUI
-    if (camController.p.textContent !== camController.texts["calibrated"]) {
-      camController.p.textContent = camController.texts["calibrated"];
-      camController.finish.enable();
-    }
+    // if (camController.p.textContent !== camController.texts["calibrated"]) {
+    // camController.p.textContent = camController.texts["calibrated"];
+    camController.finish.enable();
+    // }
     console.log("after this 2");
 
     // Calculate center of selection

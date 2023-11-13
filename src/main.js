@@ -9,7 +9,6 @@ let renderTimeout = null;
 
 let gaussianCount;
 let sceneMin, sceneMax;
-let point_mode = false;
 
 let gizmoRenderer = new GizmoRenderer();
 let colorBuffer,
@@ -37,6 +36,7 @@ const settings = {
   moveDistance: 0.5,
   moveDirection: "UP",
   editColor: { r: 1, g: 1, b: 1 },
+  pointCloudMode: false,
   uploadFile: () => document.querySelector("#input").click(),
 
   // Camera calibration
@@ -295,7 +295,10 @@ async function loadScene({ scene, file }) {
     // const url = `http://127.0.0.1:5500/data/playground.ply`;
     // const url = `http://127.0.0.1:5500/data/room.ply`;
     // const url = `http://127.0.0.1:5500/data/Shahan_03_id01-30000.ply`;
+    // const url = `http://127.0.0.1:5500/data/Shahan_03_id01-30000.ply`;
+    // const url = `http://127.0.0.1:5500/data/Shahan_04_id01-30000.ply`;
     const url = `http://127.0.0.1:5500/data/E7_01_id01-30000.ply`;
+    // const url = `http://127.0.0.1:5500/data/E7_01_id02-70000.ply`;
     // const url = `http://127.0.0.1:5500/data/Shahan_02_id02-120000.ply`;
     const response = await fetch(url);
     contentLength = parseInt(response.headers.get("content-length"));
@@ -318,7 +321,7 @@ async function loadScene({ scene, file }) {
   data.cov3Db = new Float32Array(gaussianCount * 3);
 
   for (let i = 0; i < gaussianCount; i++) {
-    if (point_mode) {
+    if (settings.pointCloudMode) {
       data.cov3Da[i * 3] = 0;
       data.cov3Da[i * 3 + 1] = 0;
       data.cov3Da[i * 3 + 2] = 0;
