@@ -19,15 +19,16 @@ function initGUI() {
   const sceneNames = Object.entries(defaultCameraParameters).map(
     ([name, { size }]) => `${name} (${size})`
   );
-  settings.scene = sceneNames[0];
-  // gui
-  //   .add(settings, "scene", sceneNames)
-  //   .name("Scene")
-  //   .listen()
-  //   .onChange((scene) => loadScene({ scene }));
 
-  gui.add(settings, "selectionSize", 0.01, 1, 0.01).name("Selection Size");
-  gui.add(settings, "moveDistance", 0.01, 1, 0.01).name("Move Distance");
+  settings.scene = sceneNames[0];
+  gui
+    .add(settings, "scene", sceneNames)
+    .name("Scene")
+    .listen()
+    .onChange((scene) => loadScene({ scene }));
+
+  gui.add(settings, "selectionSize", 0.01, 5, 0.01).name("Selection Size");
+  gui.add(settings, "moveDistance", 0.01, 5, 0.01).name("Move Distance");
   gui.add(settings, "moveDirection", ["UP", "DOWN"]).name("Move Direction");
   gui.addColor(settings, "editColor").name("Color");
   // gui

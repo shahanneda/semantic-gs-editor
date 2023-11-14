@@ -265,6 +265,9 @@ class Camera {
     invertRow(this.vm, 0);
     invertRow(this.vpm, 0);
 
+    console.log(this.target);
+    // console.log(this.pos);
+    // console.log(this.theta, this.phi, this.radius);
     this.updateWorker();
   }
 
