@@ -1,7 +1,22 @@
-// Load all gaussian data from a point-cloud file
-// Original C++ implementation: https://gitlab.inria.fr/sibr/sibr_core/-/blob/gaussian_code_release_union/src/projects/gaussianviewer/renderer/GaussianView.cpp#L70
-async function loadPly(content) {
+var fs = require("fs");
+
+async function startCompression() {
+  // const response = await fetch(url);
+  // let contentLength = parseInt(response.headers.get("content-length"));
+  // const reader = response.body.getReader();
+
+  var buffer = fs.readFileSync(
+    "/home/shahanneda/Documents/projects/Gaussian-Splatting-WebGL/data/room.ply"
+  );
+  let content = new Uint8Array(buffer);
+  console.log(content);
+  console.log(content);
+  await compressSplat(content);
+}
+
+async function compressSplat(content) {
   // Read header
+  console.log(content);
   const start = performance.now();
   const contentStart = new TextDecoder("utf-8").decode(content.slice(0, 2000));
   const headerEnd =
@@ -12,10 +27,6 @@ async function loadPly(content) {
   const regex = /element vertex (\d+)/;
   const match = header.match(regex);
   gaussianCount = parseInt(match[1]);
-
-  document.querySelector(
-    "#loading-text"
-  ).textContent = `Success. Initializing ${gaussianCount} gaussians...`;
 
   // Create arrays for gaussian properties
   const positions = [];
@@ -62,7 +73,11 @@ async function loadPly(content) {
     return { position, harmonic, opacity, scale, rotation };
   };
 
+  // format is opacity (1), color(3), cov3d(6), position(3)
+  out = [];
+  out.push(gaussianCount);
   for (let i = 0; i < gaussianCount; i++) {
+    currentSpat = [];
     // Extract data for current gaussian
     let { position, harmonic, opacity, scale, rotation } = extractSplatData(i);
 
@@ -113,12 +128,28 @@ async function loadPly(content) {
     // scales.push(...scale)
 
     positions.push(...position);
+
+    currentSpat.push(opacity);
+    currentSpat.push(...color);
+    currentSpat.push(...cov3D);
+    currentSpat.push(...position);
+    // console.log(currentSpat);
+    out.push(...currentSpat);
   }
 
-  console.log("opacitiy", opacities[0]);
-  console.log("color", colors.slice(0, 3));
-  console.log("cov3d", cov3Ds.slice(0, 6));
-  console.log("position", positions.slice(0, 3));
+  var wstream = fs.createWriteStream("compressedOut.cply");
+  // var data = new Float32Array([1.1, 2.2, 3.3, 4.4, 5.5]);
+  var data = out;
+  console.log(data.slice(0, 20));
+  //prepare the length of the buffer to 4 bytes per float
+  var buffer = new Buffer.alloc(data.length * 4);
+  for (var i = 0; i < data.length; i++) {
+    //write the float in Little-Endian and move the offset
+    buffer.writeFloatLE(data[i], i * 4);
+  }
+  wstream.write(buffer);
+  wstream.end();
+
   console.log(
     `Loaded ${gaussianCount} gaussians in ${(
       (performance.now() - start) /
@@ -132,7 +163,7 @@ async function loadPly(content) {
 // Converts scale and rotation properties of each
 // Gaussian to a 3D covariance matrix in world space.
 // Original CUDA implementation: https://github.com/graphdeco-inria/diff-gaussian-rasterization/blob/main/cuda_rasterizer/forward.cu#L118
-const { mat3 } = glMatrix;
+const { mat3 } = require("gl-matrix");
 const tmp = mat3.create();
 const S = mat3.create();
 const R = mat3.create();
@@ -187,10 +218,6 @@ async function downloadPly(reader, contentLength) {
         buffer.set(value, downloadedBytes - value.byteLength);
 
         const progress = (downloadedBytes / contentLength) * 100;
-        document.querySelector("#loading-bar").style.width = progress + "%";
-        document.querySelector(
-          "#loading-text"
-        ).textContent = `Downloading 3D scene... ${progress.toFixed(2)}%`;
 
         readNextChunk();
       } else {
@@ -201,3 +228,5 @@ async function downloadPly(reader, contentLength) {
     readNextChunk();
   });
 }
+
+startCompression();

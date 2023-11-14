@@ -91,6 +91,7 @@ const defaultCameraParameters = {
     camera: [4.950796326794864, 1.7307963267948987, 2.5],
     defaultCameraMode: "freefly",
     url: "https://shahanneda-models.s3.us-east-2.amazonaws.com/E7_01_id01-30000.ply",
+    localUrl: "http://127.0.0.1:5500/data/E7_01_id01-30000.ply",
     size: "500mb",
   },
 };
@@ -319,13 +320,17 @@ async function loadScene({ scene, file }) {
   // Create a StreamableReader from a URL Response object
   if (scene != null) {
     scene = scene.split("(")[0].trim();
-    const url = defaultCameraParameters[scene].url;
+
+    // const url = isLocalHost
+    //   ? defaultCameraParameters[scene].localUrl
+    //   : defaultCameraParameters[scene].url;
+    const url = `http://127.0.0.1:5500/compressedOut.cply`;
+    // const url = `http://127.0.0.1:5500/data/room.ply`;
     // const url = `https://huggingface.co/kishimisu/3d-gaussian-splatting-webgl/resolve/main/${scene}.ply`;
     // const url = `http://127.0.0.1:5500/data/shahan2-400005.ply`;
     // const url = `http://127.0.0.1:5500/data/shahan2-id05-100000.ply`;
     // const url = `http://127.0.0.1:5500/data/shahan2-id06-150000.ply`;
     // const url = `http://127.0.0.1:5500/data/playground.ply`;
-    // const url = `http://127.0.0.1:5500/data/room.ply`;
     // const url = `http://127.0.0.1:5500/data/Shahan_03_id01-30000.ply`;
     // const url = `http://127.0.0.1:5500/data/Shahan_03_id02-30000.ply`;
     // const url = `http://127.0.0.1:5500/data/Shahan_04_id01-30000.ply`;
