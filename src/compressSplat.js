@@ -1,20 +1,27 @@
 var fs = require("fs");
 
-async function startCompression() {
+async function startCompression(filename) {
+  // const response = await fetch(url);
+  // let contentLength = parseInt(response.headers.get("content-length"));
+  // const url = "http://127.0.0.1:5500/data/room.ply";
   // const response = await fetch(url);
   // let contentLength = parseInt(response.headers.get("content-length"));
   // const reader = response.body.getReader();
+  // const content = await downloadPly(reader, contentLength);
+  // console.log(content);
 
-  var buffer = fs.readFileSync(
-    "/home/shahanneda/Documents/projects/Gaussian-Splatting-WebGL/data/room.ply"
-  );
-  let content = new Uint8Array(buffer);
-  console.log(content);
-  console.log(content);
-  await compressSplat(content);
+  // const data = await compressSplat(content.buffer);
+  // // const reader = response.body.getReader();
+  var buffer = fs.readFileSync(filename);
+  outputName = filename.split(".")[0] + ".cply";
+  console.log(outputName);
+  // let content2 = new Uint8Array(buffer.buffer);
+  // console.log(content2);
+  // console
+  await compressSplat(buffer.buffer, outputName);
 }
 
-async function compressSplat(content) {
+async function compressSplat(content, outputName) {
   // Read header
   console.log(content);
   const start = performance.now();
@@ -137,10 +144,10 @@ async function compressSplat(content) {
     out.push(...currentSpat);
   }
 
-  var wstream = fs.createWriteStream("compressedOut.cply");
+  var wstream = fs.createWriteStream(outputName);
   // var data = new Float32Array([1.1, 2.2, 3.3, 4.4, 5.5]);
   var data = out;
-  console.log(data.slice(0, 20));
+  // console.log(data.slice(0, 20));
   //prepare the length of the buffer to 4 bytes per float
   var buffer = new Buffer.alloc(data.length * 4);
   for (var i = 0; i < data.length; i++) {
@@ -229,4 +236,8 @@ async function downloadPly(reader, contentLength) {
   });
 }
 
-startCompression();
+var args = process.argv.slice(2);
+if (args.length != 1) {
+  throw "Please enter file name!";
+}
+startCompression(args[0]);
