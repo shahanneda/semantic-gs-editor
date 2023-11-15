@@ -28,7 +28,8 @@ function initGUI() {
     .listen()
     .onChange((scene) => loadScene({ scene }));
 
-  gui.add(settings, "editingMode", EDITING_MODES).name("Editing Mode");
+  gui.add(settings, "editingMode", EDITING_MODES).name("Editing(ALT + CLICK)");
+  // gui.add(settings, "Hello");
 
   gui.add(settings, "selectionSize", 0.01, 5, 0.01).name("Selection Size");
   gui.add(settings, "moveDistance", 0.01, 5, 0.01).name("Move Distance");
