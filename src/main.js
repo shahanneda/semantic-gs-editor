@@ -107,9 +107,8 @@ const updateBuffer = (buffer, data) => {
   gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
 };
 
-// const isLocalHost =
-//   location.hostname === "localhost" || location.hostname === "127.0.0.1";
-const isLocalHost = false;
+const isLocalHost =
+  location.hostname === "localhost" || location.hostname === "127.0.0.1";
 
 async function main() {
   // Setup webgl context and buffers
