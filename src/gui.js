@@ -1,4 +1,5 @@
 const SORTING_ALGORITHMS = ["count sort", "quick sort", "Array.sort"];
+const EDITING_MODES = ["color", "remove", "move"];
 
 let maxGaussianController = null;
 let camController = {
@@ -26,6 +27,8 @@ function initGUI() {
     .name("Scene")
     .listen()
     .onChange((scene) => loadScene({ scene }));
+
+  gui.add(settings, "editingMode", EDITING_MODES).name("Editing Mode");
 
   gui.add(settings, "selectionSize", 0.01, 5, 0.01).name("Selection Size");
   gui.add(settings, "moveDistance", 0.01, 5, 0.01).name("Move Distance");

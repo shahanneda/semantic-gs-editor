@@ -32,6 +32,7 @@ const settings = {
   freeFly: false,
   sortTime: "NaN",
   file: "data/nike/model.splat",
+  editingMode: "color",
   selectionSize: 0.5,
   moveDistance: 0.5,
   moveDirection: "UP",
@@ -188,7 +189,14 @@ function handleInteractive(e) {
     // colorRed(e.clientX, e.clientY);
     removeOpacity(e.clientX, e.clientY);
   } else if (e.altKey) {
-    interactiveColor(e.clientX, e.clientY);
+    console.log(settings.editingMode);
+    if (settings.editingMode == "remove") {
+      removeOpacity(e.clientX, e.clientY);
+    } else if (settings.editingMode == "move") {
+      moveUp(e.clientX, e.clientY);
+    } else {
+      interactiveColor(e.clientX, e.clientY);
+    }
   }
 }
 
