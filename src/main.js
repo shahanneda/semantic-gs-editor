@@ -66,7 +66,7 @@ const defaultCameraParameters = {
     camera: [0.05525314883290969, 1.7146055100920843, 0.28674553471761843],
     defaultCameraMode: "freefly",
     size: "54mb",
-    url: "https://shahanneda-models.s3.us-east-2.amazonaws.com/Shahan_03_id01-30000.ply",
+    url: "https://shahanneda-models.s3.us-east-2.amazonaws.com/Shahan_03_id01-30000.cply",
     localUrl: "http://127.0.0.1:5500/data/Shahan_03_id01-30000.cply",
     // localUrl: "http://127.0.0.1:5500/data/Shahan_03_id01-30000.cply",
   },
@@ -94,7 +94,7 @@ const defaultCameraParameters = {
     // target: [3.2103200629353523, 0.13693869020789862, 0.1940572769381106],
     // camera: [0.05525314883290969, 1.7146055100920843, 0.28674553471761843],
     defaultCameraMode: "freefly",
-    url: "https://shahanneda-models.s3.us-east-2.amazonaws.com/E7_01_id01-30000.ply",
+    url: "https://shahanneda-models.s3.us-east-2.amazonaws.com/E7_01_id01-30000.cply",
     // localUrl: "http://127.0.0.1:5500/data/E7_01_id01-30000.ply",
     localUrl: "http://127.0.0.1:5500/data/E7_01_id01-30000.cply",
     size: "119mb",
@@ -107,8 +107,9 @@ const updateBuffer = (buffer, data) => {
   gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
 };
 
-const isLocalHost =
-  location.hostname === "localhost" || location.hostname === "127.0.0.1";
+// const isLocalHost =
+//   location.hostname === "localhost" || location.hostname === "127.0.0.1";
+const isLocalHost = false;
 
 async function main() {
   // Setup webgl context and buffers

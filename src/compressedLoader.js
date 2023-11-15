@@ -1,10 +1,10 @@
 // format is opacity (1), color(3), cov3d(6), position(3)
 async function loadPly(content) {
-  console.log(content);
-  var data = new Float64Array(content);
-  console.log(data.slice(0, 14));
+  // console.log(content);
+  var data = new Float32Array(content);
+  // console.log(data.slice(0, 14));
   gaussianCount = parseInt(data[0]);
-  console.log(gaussianCount);
+  // console.log(gaussianCount);
 
   document.querySelector(
     "#loading-text"
@@ -22,7 +22,7 @@ async function loadPly(content) {
   sceneMin = new Array(3).fill(Infinity);
   sceneMax = new Array(3).fill(-Infinity);
 
-  console.log(gaussianCount);
+  // console.log(gaussianCount);
   for (let i = 0; i < gaussianCount; i++) {
     shift = 13 * i + 1;
     const opacity = data[shift];
@@ -35,11 +35,11 @@ async function loadPly(content) {
     cov3Ds.push(...cov3d);
     positions.push(...position);
   }
-  console.log("opacitiy", opacities[1]);
-  console.log("color", colors.slice(3, 6));
-  console.log("cov3d", cov3Ds.slice(6, 12));
-  console.log("position", positions.slice(3, 6));
-  console.log(opacities);
+  // console.log("opacitiy", opacities[1]);
+  // console.log("color", colors.slice(3, 6));
+  // console.log("cov3d", cov3Ds.slice(6, 12));
+  // console.log("position", positions.slice(3, 6));
+  // console.log(opacities);
 
   return { positions, opacities, colors, cov3Ds };
 }
