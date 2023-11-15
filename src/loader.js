@@ -62,6 +62,7 @@ async function loadPly(content) {
     return { position, harmonic, opacity, scale, rotation };
   };
 
+  console.log(gaussianCount);
   for (let i = 0; i < gaussianCount; i++) {
     // Extract data for current gaussian
     let { position, harmonic, opacity, scale, rotation } = extractSplatData(i);
@@ -115,10 +116,12 @@ async function loadPly(content) {
     positions.push(...position);
   }
 
-  console.log("opacitiy", opacities[0]);
-  console.log("color", colors.slice(0, 3));
-  console.log("cov3d", cov3Ds.slice(0, 6));
-  console.log("position", positions.slice(0, 3));
+  console.log("opacitiy", opacities[1]);
+  console.log("color", colors.slice(3, 6));
+  console.log("cov3d", cov3Ds.slice(6, 12));
+  console.log("position", positions.slice(3, 6));
+  console.log(opacities);
+
   console.log(
     `Loaded ${gaussianCount} gaussians in ${(
       (performance.now() - start) /

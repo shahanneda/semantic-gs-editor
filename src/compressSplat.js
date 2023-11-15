@@ -147,12 +147,13 @@ async function compressSplat(content, outputName) {
   var wstream = fs.createWriteStream(outputName);
   // var data = new Float32Array([1.1, 2.2, 3.3, 4.4, 5.5]);
   var data = out;
+  console.log(data);
   // console.log(data.slice(0, 20));
   //prepare the length of the buffer to 4 bytes per float
-  var buffer = new Buffer.alloc(data.length * 4);
+  var buffer = new Buffer.alloc(data.length * 8);
   for (var i = 0; i < data.length; i++) {
     //write the float in Little-Endian and move the offset
-    buffer.writeFloatLE(data[i], i * 4);
+    buffer.writeDoubleLE(data[i], i * 8);
   }
   wstream.write(buffer);
   wstream.end();

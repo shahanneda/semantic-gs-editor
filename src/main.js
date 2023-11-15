@@ -65,10 +65,10 @@ const defaultCameraParameters = {
     target: [3.2103200629353523, 0.13693869020789862, 0.1940572769381106],
     camera: [0.05525314883290969, 1.7146055100920843, 0.28674553471761843],
     defaultCameraMode: "freefly",
-    size: "256mb",
+    size: "54mb",
     url: "https://shahanneda-models.s3.us-east-2.amazonaws.com/Shahan_03_id01-30000.ply",
-    // url: "http://127.0.0.1:5500/data/Shahan_03_id01-30000.ply",
     localUrl: "http://127.0.0.1:5500/data/Shahan_03_id01-30000.ply",
+    // localUrl: "http://127.0.0.1:5500/data/Shahan_03_id01-30000.cply",
   },
 
   // const url = `http://127.0.0.1:5500/data/shahan2-400005.ply`;
@@ -86,13 +86,18 @@ const defaultCameraParameters = {
   //   size: "500mb",
   // },
   E7: {
-    up: [0, 0.886994, 0.461779],
-    target: [-0.428322434425354, 1.2004123210906982, 0.8184626698493958],
-    camera: [4.950796326794864, 1.7307963267948987, 2.5],
+    // up: [0, 0.886994, 0.461779],
+    // target: [-0.428322434425354, 1.2004123210906982, 0.8184626698493958],
+    // camera: [4.950796326794864, 1.7307963267948987, 2.5],
+
+    up: [0.0011537416139617562, 0.9714341759681702, 0.23730631172657013],
+    target: [3.2103200629353523, 0.13693869020789862, 0.1940572769381106],
+    camera: [0.05525314883290969, 1.7146055100920843, 0.28674553471761843],
     defaultCameraMode: "freefly",
     url: "https://shahanneda-models.s3.us-east-2.amazonaws.com/E7_01_id01-30000.ply",
     localUrl: "http://127.0.0.1:5500/data/E7_01_id01-30000.ply",
-    size: "500mb",
+    // localUrl: "http://127.0.0.1:5500/data/E7_01_id01-30000.cply",
+    size: "119mb",
   },
 };
 
@@ -321,10 +326,10 @@ async function loadScene({ scene, file }) {
   if (scene != null) {
     scene = scene.split("(")[0].trim();
 
-    // const url = isLocalHost
-    //   ? defaultCameraParameters[scene].localUrl
-    //   : defaultCameraParameters[scene].url;
-    const url = `http://127.0.0.1:5500/data/Shahan_02_id02-30000.cply`;
+    const url = isLocalHost
+      ? defaultCameraParameters[scene].localUrl
+      : defaultCameraParameters[scene].url;
+    // const url = `http://127.0.0.1:5500/data/Shahan_02_id02-30000.cply`;
     // const url = `http://127.0.0.1:5500/data/room.ply`;
     // const url = `https://huggingface.co/kishimisu/3d-gaussian-splatting-webgl/resolve/main/${scene}.ply`;
     // const url = `http://127.0.0.1:5500/data/shahan2-400005.ply`;
