@@ -189,7 +189,6 @@ function handleInteractive(e) {
     // colorRed(e.clientX, e.clientY);
     removeOpacity(e.clientX, e.clientY);
   } else if (e.altKey) {
-    console.log(settings.editingMode);
     if (settings.editingMode == "remove") {
       removeOpacity(e.clientX, e.clientY);
     } else if (settings.editingMode == "move") {
