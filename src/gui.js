@@ -20,7 +20,7 @@ function initGUI() {
     ([name, { size }]) => `${name} (${size})`
   );
 
-  settings.scene = sceneNames[0];
+  // settings.scene = sceneNames[0];
   gui
     .add(settings, "scene", sceneNames)
     .name("Scene")

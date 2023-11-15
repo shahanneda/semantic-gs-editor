@@ -20,7 +20,7 @@ let colorBuffer,
 globalData = undefined;
 
 const settings = {
-  scene: "E7",
+  scene: "shahan",
   renderResolution: 0.2,
   maxGaussians: 3e6,
   scalingModifier: 1,
@@ -67,7 +67,7 @@ const defaultCameraParameters = {
     defaultCameraMode: "freefly",
     size: "54mb",
     url: "https://shahanneda-models.s3.us-east-2.amazonaws.com/Shahan_03_id01-30000.ply",
-    localUrl: "http://127.0.0.1:5500/data/Shahan_03_id01-30000.ply",
+    localUrl: "http://127.0.0.1:5500/data/Shahan_03_id01-30000.cply",
     // localUrl: "http://127.0.0.1:5500/data/Shahan_03_id01-30000.cply",
   },
 
@@ -86,17 +86,17 @@ const defaultCameraParameters = {
   //   size: "500mb",
   // },
   E7: {
-    // up: [0, 0.886994, 0.461779],
-    // target: [-0.428322434425354, 1.2004123210906982, 0.8184626698493958],
-    // camera: [4.950796326794864, 1.7307963267948987, 2.5],
+    up: [0, 0.886994, 0.461779],
+    target: [-0.428322434425354, 1.2004123210906982, 0.8184626698493958],
+    camera: [4.950796326794864, 1.7307963267948987, 2.5],
 
-    up: [0.0011537416139617562, 0.9714341759681702, 0.23730631172657013],
-    target: [3.2103200629353523, 0.13693869020789862, 0.1940572769381106],
-    camera: [0.05525314883290969, 1.7146055100920843, 0.28674553471761843],
+    // up: [0.0011537416139617562, 0.9714341759681702, 0.23730631172657013],
+    // target: [3.2103200629353523, 0.13693869020789862, 0.1940572769381106],
+    // camera: [0.05525314883290969, 1.7146055100920843, 0.28674553471761843],
     defaultCameraMode: "freefly",
     url: "https://shahanneda-models.s3.us-east-2.amazonaws.com/E7_01_id01-30000.ply",
-    localUrl: "http://127.0.0.1:5500/data/E7_01_id01-30000.ply",
-    // localUrl: "http://127.0.0.1:5500/data/E7_01_id01-30000.cply",
+    // localUrl: "http://127.0.0.1:5500/data/E7_01_id01-30000.ply",
+    localUrl: "http://127.0.0.1:5500/data/E7_01_id01-30000.cply",
     size: "119mb",
   },
 };
@@ -315,6 +315,7 @@ function removeOpacity(x, y) {
 
 // Load a .ply scene specified as a name (URL fetch) or local file
 async function loadScene({ scene, file }) {
+  console.log("loading scene", file, scene);
   gl.clearColor(0, 0, 0, 0);
   gl.clear(gl.COLOR_BUFFER_BIT);
   if (cam) cam.disableMovement = true;
@@ -339,7 +340,7 @@ async function loadScene({ scene, file }) {
     // const url = `http://127.0.0.1:5500/data/Shahan_03_id01-30000.ply`;
     // const url = `http://127.0.0.1:5500/data/Shahan_03_id02-30000.ply`;
     // const url = `http://127.0.0.1:5500/data/Shahan_04_id01-30000.ply`;
-    // const url = `http://127.0.0.1:5500/data/E7_01_id01-30000.ply`;
+    // const url = `http://127.0.0.1:5500/data/E7_01_id01-30000.cply`;
     // const url = `https://shahanneda-models.s3.us-east-2.amazonaws.com/E7_01_id01-30000.ply`;
     // const url = `http://127.0.0.1:5500/data/E7_01_id02-70000.ply`;
     // const url = `http://127.0.0.1:5500/data/Shahan_02_id02-120000.ply`;
@@ -411,7 +412,7 @@ async function loadScene({ scene, file }) {
   cam.update();
 
   // Update GUI
-  settings.maxGaussians = Math.min(settings.maxGaussians, gaussianCount);
+  settings.maxGaussians = gaussianCount;
   maxGaussianController.max(gaussianCount);
   maxGaussianController.updateDisplay();
 }
