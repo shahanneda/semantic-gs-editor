@@ -9,6 +9,8 @@ let renderTimeout = null;
 
 let gaussianCount;
 let sceneMin, sceneMax;
+let currentlyDownloading = false;
+let shouldBreakDownload = false;
 
 let gizmoRenderer = new GizmoRenderer();
 let colorBuffer,
@@ -19,8 +21,14 @@ let colorBuffer,
   colorData;
 globalData = undefined;
 
+const urlParams = new URLSearchParams(window.location.search);
+let startingScene = urlParams.get("scene");
+if (!startingScene) {
+  startingScene = "shahan";
+}
+
 const settings = {
-  scene: "shahan",
+  scene: startingScene,
   renderResolution: 0.2,
   maxGaussians: 3e6,
   scalingModifier: 1,
@@ -109,7 +117,8 @@ const updateBuffer = (buffer, data) => {
 };
 
 const isLocalHost =
-  location.hostname === "localhost" || location.hostname === "127.0.0.1";
+  (false && location.hostname === "localhost") ||
+  (false && location.hostname === "127.0.0.1");
 
 async function main() {
   // Setup webgl context and buffers

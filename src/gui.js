@@ -26,7 +26,22 @@ function initGUI() {
     .add(settings, "scene", sceneNames)
     .name("Scene")
     .listen()
-    .onChange((scene) => loadScene({ scene }));
+    .onChange((scene) => {
+      if (currentlyDownloading) {
+        shouldBreakDownload = true;
+      }
+
+      if ("URLSearchParams" in window) {
+        var searchParams = new URLSearchParams(window.location.search);
+        searchParams.set("scene", scene);
+        window.location.search = searchParams.toString();
+      }
+      // Wait for previous download to finish canceling first
+      setTimeout(() => {
+        shouldBreakDownload = false;
+        loadScene({ scene });
+      }, 100);
+    });
 
   gui.add(settings, "editingMode", EDITING_MODES).name("Editing(ALT + CLICK)");
   // gui.add(settings, "Hello");

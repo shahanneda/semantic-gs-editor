@@ -90,11 +90,18 @@ function computeCov3D(scale, mod, rot) {
 
 // Download a .ply file from a ReadableStream chunk by chunk and monitor the progress
 async function downloadPly(reader, contentLength) {
+  currentlyDownloading = true;
   return new Promise(async (resolve, reject) => {
     const buffer = new Uint8Array(contentLength);
     let downloadedBytes = 0;
 
     const readNextChunk = async () => {
+      if (shouldBreakDownload) {
+        shouldBreakDownload = false;
+        currentlyDownloading = false;
+        return;
+      }
+
       const { value, done } = await reader.read();
 
       if (!done) {
@@ -109,6 +116,7 @@ async function downloadPly(reader, contentLength) {
 
         readNextChunk();
       } else {
+        currentlyDownloading = false;
         resolve(buffer);
       }
     };
