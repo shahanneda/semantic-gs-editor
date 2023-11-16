@@ -96,8 +96,10 @@ const defaultCameraParameters = {
   // },
   E7: {
     up: [0, 0.886994, 0.461779],
-    target: [-0.428322434425354, 1.2004123210906982, 0.8184626698493958],
-    camera: [4.950796326794864, 1.7307963267948987, 2.5],
+    camera: [3.240796326794875, 1.9407963267948949, 2.5],
+    target: [-2.1753409490920603, 0.4094253536430188, 2.07857081561815],
+    // [-3.103083372116089, 0.1313146948814392, 1.8296805620193481]
+    // camera.js:270 tphirad 3.240796326794875 1.9407963267948949 2.5
 
     // up: [0.0011537416139617562, 0.9714341759681702, 0.23730631172657013],
     // target: [3.2103200629353523, 0.13693869020789862, 0.1940572769381106],
@@ -117,8 +119,7 @@ const updateBuffer = (buffer, data) => {
 };
 
 const isLocalHost =
-  (false && location.hostname === "localhost") ||
-  (false && location.hostname === "127.0.0.1");
+  location.hostname === "localhost" || location.hostname === "127.0.0.1";
 
 async function main() {
   // Setup webgl context and buffers
