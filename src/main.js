@@ -26,7 +26,7 @@ globalData = undefined;
 const urlParams = new URLSearchParams(window.location.search);
 let startingScene = urlParams.get("scene");
 if (!startingScene) {
-  startingScene = "shahan";
+  startingScene = "couch";
 }
 
 const settings = {
@@ -72,14 +72,14 @@ const defaultCameraParameters = {
   //   size: "1.07gb [!]",
   // },
 
-  shahan: {
+  couch: {
     up: [0.0011537416139617562, 0.9714341759681702, 0.23730631172657013],
     target: [3.2103200629353523, 0.13693869020789862, 0.1940572769381106],
     camera: [0.05525314883290969, 1.7146055100920843, 0.28674553471761843],
     defaultCameraMode: "freefly",
-    size: "54mb",
-    url: "https://shahanneda-models.s3.us-east-2.amazonaws.com/Shahan_03_id01-30000.cply",
-    localUrl: "http://127.0.0.1:5500/data/Shahan_03_id01-30000.cply",
+    size: "16.6mb",
+    url: "https://shahanneda-models.s3.us-east-2.amazonaws.com/couch_id26-30000.csply",
+    localUrl: "http://127.0.0.1:5501/data/couch_id26-30000.csply",
     // localUrl: "http://127.0.0.1:5500/data/Shahan_03_id01-30000.cply",
   },
 
@@ -97,22 +97,22 @@ const defaultCameraParameters = {
   //   localUrl: "http://127.0.0.1:5500/data/shahan2-id06-150000.ply",
   //   size: "500mb",
   // },
-  E7: {
-    up: [0, 0.886994, 0.461779],
-    camera: [3.240796326794875, 1.9407963267948949, 2.5],
-    target: [-2.1753409490920603, 0.4094253536430188, 2.07857081561815],
-    // [-3.103083372116089, 0.1313146948814392, 1.8296805620193481]
-    // camera.js:270 tphirad 3.240796326794875 1.9407963267948949 2.5
+  // E7: {
+  //   up: [0, 0.886994, 0.461779],
+  //   camera: [3.240796326794875, 1.9407963267948949, 2.5],
+  //   target: [-2.1753409490920603, 0.4094253536430188, 2.07857081561815],
+  //   // [-3.103083372116089, 0.1313146948814392, 1.8296805620193481]
+  //   // camera.js:270 tphirad 3.240796326794875 1.9407963267948949 2.5
 
-    // up: [0.0011537416139617562, 0.9714341759681702, 0.23730631172657013],
-    // target: [3.2103200629353523, 0.13693869020789862, 0.1940572769381106],
-    // camera: [0.05525314883290969, 1.7146055100920843, 0.28674553471761843],
-    defaultCameraMode: "freefly",
-    url: "https://shahanneda-models.s3.us-east-2.amazonaws.com/E7_01_id01-30000.cply",
-    // localUrl: "http://127.0.0.1:5500/data/E7_01_id01-30000.ply",
-    localUrl: "http://127.0.0.1:5500/data/E7_01_id01-30000.cply",
-    size: "119mb",
-  },
+  //   // up: [0.0011537416139617562, 0.9714341759681702, 0.23730631172657013],
+  //   // target: [3.2103200629353523, 0.13693869020789862, 0.1940572769381106],
+  //   // camera: [0.05525314883290969, 1.7146055100920843, 0.28674553471761843],
+  //   defaultCameraMode: "freefly",
+  //   url: "https://shahanneda-models.s3.us-east-2.amazonaws.com/E7_01_id01-30000.cply",
+  //   // localUrl: "http://127.0.0.1:5500/data/E7_01_id01-30000.ply",
+  //   localUrl: "http://127.0.0.1:5500/data/E7_01_id01-30000.cply",
+  //   size: "119mb",
+  // },
 };
 
 const updateBuffer = (buffer, data) => {
@@ -449,10 +449,12 @@ async function loadScene({ scene, file }) {
   if (scene != null) {
     scene = scene.split("(")[0].trim();
 
-    // const url = isLocalHost
-    //   ? defaultCameraParameters[scene].localUrl
-    //   : defaultCameraParameters[scene].url;
-    const url = `http://127.0.0.1:5501/data/couch_id26-30000.csply`;
+    const url = isLocalHost
+      ? defaultCameraParameters[scene].localUrl
+      : defaultCameraParameters[scene].url;
+
+    // const url = defaultCameraParameters[scene].url;
+    // const url = `http://127.0.0.1:5501/data/couch_id26-30000.csply`;
     // const url = `http://127.0.0.1:5501/data/couch_id25-30000.sply`;
     // const url = `http://127.0.0.1:5501/data/couch_id26-30000.sply`;
     // const url = `http://127.0.0.1:5501/data/replica_id05-2400.sply`;
